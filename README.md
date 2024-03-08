@@ -1,38 +1,66 @@
-# tyk-templates
+# TykHealthcheck
 
-This is a Template repo for all your template needs.
-You can use it as a base tempalte to create your new repo or copy basic important files to add to your repo.
+## Overview
 
-## Current templates in the repo
+TykHealthcheck is a flexible health checking framework designed for Tyk ecosystem applications. It offers a structured approach to implement and manage both liveness and readiness checks, ensuring your services are healthy and ready to handle requests. With TykHealthcheck, you can define custom health checks tailored to your application's specific needs and easily expose them over HTTP.
 
-1. [Contribution guidelines](./CONTRIBUTING.md) 
-2. [PR template](./.github/pull_request_template.md)
-3. [Bug report template](./.github/ISSUE_TEMPLATE/bug_report.md)
-4. [Feature request template](./.github/ISSUE_TEMPLATE/feature_request.md) 
-5. [Contributor License Agreement](https://github.com/TykTechnologies/tyk/blob/master/CLA.md) - This will enforce your contributors to sign the CLA on the first time they submit a PR.
-6. [License](./LICENSE)  *from tyk-gateway*
-7. [Default Repo README](./.github/README-template.md), which resides in `/.github`
+## Key Features
 
+- **Custom Health Checks**: Easily define your own liveness and readiness checks specific to your application's requirements.
+- **Health Check Types**: Distinguish between essential (required) and optional checks.
+- **HTTP Handler Support**: TykHealthcheck provides HTTP handlers to expose your health checks over HTTP, making it easy to integrate with your application's routing and middleware.
+- **Caching for Readiness Checks**: Supports caching of readiness check results for efficient operation.
 
-## How to use this repo
-### For a new repo
-  - Create your repository using this repo as a template ([GitHub instruction](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template#creating-a-repository-from-a-template)).
-  - Rename the file `./.github/README-template.md` to `./.github/README.md` (remove the `-template` part) to get GitHub to display this README
-  - Update `./.github/README.md` with the relevant content for your repo
+## Getting Started
 
-### For an existing repo
-Please make sure your repo has all the required templates which are defined in the [section below](#current-template-in-the-repo) by simply copying the relevant templates or add content that is in the template but not in your repo files.
+### Prerequisites
 
+Before you begin, ensure you have a working Go environment. TykHealthcheck is built using Go and requires Go installed to compile and run the applications that use it.
 
-## Asking users To sign CLA on submitting a pull request (for existing repo)
-For existing repo you can add the feature that ask contributors to sign the CLA on submitting a pull request by copying the [CLA file](.github/workflows/cla.yml) to your `.github/workflows/cla.yml` folder.
+### Installing TykHealthcheck
 
+To start using TykHealthcheck in your project, you need to add it as a dependency:
 
-## Backlog / WIP
-1. Common GitHub workflows you use across all the repo (e.g. spell checker)
-2. Make releases to this repo.
+```sh
+go get github.com/TykTechnologies/TykHealthcheck
+```
+### Implementing Health Checks
+Implementing health checks with TykHealthcheck involves creating health checkers, registering checks, and exposing them via HTTP. Here's a quick start guide:
 
+#### 1- Create Health Checkers:
+Initialize health checkers for liveness and readiness checks.
 
-## Adjustments / Changes / Updates
-Please feel free to submit PRs, bugs and feature request when you think the templates needs fix or improvement.
+```go
+readinessHealthChecker := hc.NewHealthChecker()
+livenessHealthChecker := hc.NewHealthChecker()
+```
+
+#### 2- Register checks
+Define and register your custom health checks.
+
+```go
+livenessHealthChecker.RegisterCheck("PingCheck", hc.Required, func() (hc.HealthStatus, error) {
+    return hc.StatusPass, nil
+})
+
+readinessHealthChecker.RegisterCheck("Database", hc.Required, func() (hc.HealthStatus, error) {
+    // Implement your check logic here
+    return hc.StatusPass, nil
+})
+```
+
+#### 3- Expose Health Checks:
+Add HTTP handlers to expose your health checks.
+
+```go
+http.HandleFunc("/health/live", livenessHealthChecker.HTTPHandler())
+http.HandleFunc("/health/ready", readinessHealthChecker.HTTPHandler())
+```
+
+#### 4- Start the HTTP Server:
+Listen on a port to serve the health check endpoints.
+
+```go
+http.ListenAndServe(":9000", nil)
+```
 
