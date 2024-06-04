@@ -9,7 +9,7 @@ TykHealthcheck is a flexible health checking framework designed for Tyk ecosyste
 - **Custom Health Checks**: Easily define your own liveness and readiness checks specific to your application's requirements.
 - **Health Check Types**: Distinguish between essential (required) and optional checks.
 - **HTTP Handler Support**: TykHealthcheck provides HTTP handlers to expose your health checks over HTTP, making it easy to integrate with your application's routing and middleware.
-- **Caching for Readiness Checks**: Supports caching of readiness check results for efficient operation.
+- **Caching**: Ypu might need to implement the caching mechanism inside each check registered.
 
 ## Getting Started
 
