@@ -79,14 +79,13 @@ func (c *Check) UpdateCache() {
 }
 
 // set the observation time
-func timedCheck(name string, checkFunc CheckFunc) func() CheckResult {
+func (c *Check) timedCheck(checkFunc CheckFunc) func() CheckResult {
 	return func() CheckResult {
 		observationTS := time.Now()
 
 		status, _ := checkFunc()
-
 		return CheckResult{
-			Name:          name,
+			Name:          c.Name,
 			Status:        status,
 			ObservationTS: observationTS,
 		}

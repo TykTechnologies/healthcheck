@@ -47,7 +47,11 @@ func TestTimedCheck(t *testing.T) {
 	}
 
 	testName := "TestCheck"
-	resultFunc := timedCheck(testName, mockCheckFunc)
+	c := Check{
+		Name: testName,
+	}
+
+	resultFunc := c.timedCheck(mockCheckFunc)
 	result := resultFunc()
 
 	// Check the name

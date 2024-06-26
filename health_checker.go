@@ -14,7 +14,7 @@ type HealthChecker struct {
 }
 
 type HealthCheckResponse struct {
-	Status     string        `json:"status"`
+	Status     HealthStatus  `json:"status"`
 	StatusCode int           `json:"status_code"`
 	Components []CheckResult `json:"components"`
 }
@@ -30,13 +30,12 @@ func (hc *HealthChecker) RegisterCheck(name string, importance CheckImportance, 
 	hc.mu.Lock()
 	defer hc.mu.Unlock()
 
-	timedCheck := timedCheck(name, checkFunc)
-
 	check := &Check{
 		Name:       name,
 		Importance: importance,
-		Perform:    timedCheck,
 	}
+	// wrapp checkFunc to set the observationTS
+	check.Perform = check.timedCheck(checkFunc)
 
 	hc.checks = append(hc.checks, check)
 	return check
@@ -64,7 +63,7 @@ func (hc *HealthChecker) PerformChecks() HealthCheckResponse {
 	}
 
 	return HealthCheckResponse{
-		Status:     string(overallStatus),
+		Status:     overallStatus,
 		StatusCode: statusCode,
 		Components: results,
 	}
