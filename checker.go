@@ -1,4 +1,4 @@
-package TykHealthcheck
+package healthcheck
 
 import (
 	"github.com/patrickmn/go-cache"

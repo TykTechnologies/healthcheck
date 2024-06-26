@@ -1,7 +1,7 @@
 package main
 
 import (
-	hc "github.com/TykTechnologies/TykHealthcheck"
+	hc "github.com/TykTechnologies/healthcheck"
 	"sync"
 	"time"
 )

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	hc "github.com/TykTechnologies/TykHealthcheck"
+	hc "github.com/TykTechnologies/healthcheck"
 	"math/rand"
 	"net/http"
 	"time"
@@ -18,7 +18,6 @@ func main() {
 	})
 
 	myHealthChecker.RegisterCheck("cachedCheck", hc.Required, func() (hc.HealthStatus, error) {
-
 		status := randomStatusCheck() // Use this in a real registration call
 		return status(), nil
 	}).WithCache(3)

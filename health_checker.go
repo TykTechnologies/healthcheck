@@ -1,4 +1,4 @@
-package TykHealthcheck
+package healthcheck
 
 import (
 	"encoding/json"

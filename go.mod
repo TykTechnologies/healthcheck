@@ -1,4 +1,4 @@
-module github.com/TykTechnologies/TykHealthcheck
+module github.com/TykTechnologies/healthcheck
 
 go 1.22.3
 
