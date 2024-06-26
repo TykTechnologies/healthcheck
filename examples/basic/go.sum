@@ -1,0 +1,4 @@
+github.com/TykTechnologies/healthcheck v0.0.0-20240626154303-70f542ab9ec9 h1:M4cIX4cuuDsonWZnDR1NS3RtVu7s3M4RJYupNCIRSY0=
+github.com/TykTechnologies/healthcheck v0.0.0-20240626154303-70f542ab9ec9/go.mod h1:BUgsmxgEc/2BLnrltrq/1G9XH1ZSUlRZ9Ccucr3fNmI=
+github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
+github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
