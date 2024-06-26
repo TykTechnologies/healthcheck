@@ -1,2 +1,4 @@
 github.com/TykTechnologies/TykHealthcheck v0.0.0-20231113212311-3b2cf13ce9a2 h1:V9gUjFoiOxIaAalxmzdoHWH4Ih1yOmZHE0pRVkIBgOc=
 github.com/TykTechnologies/TykHealthcheck v0.0.0-20231113212311-3b2cf13ce9a2/go.mod h1:bBY7Y0xpwDINoTArcLeLKKyydADf6s588l2BEdEB5Z8=
+github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
+github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=

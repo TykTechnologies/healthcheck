@@ -1,90 +1,84 @@
 package TykHealthcheck
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"sync"
+	"github.com/patrickmn/go-cache"
 	"time"
 )
 
-func NewHealthChecker() *HealthChecker {
-	return &HealthChecker{
-		checks: make([]*Check, 0),
-		mu:     sync.RWMutex{},
-	}
+// Check represents an individual health check
+type Check struct {
+	Name       string
+	Importance CheckImportance
+	Perform    func() CheckResult
+	caching    *caching
 }
 
-func (hc *HealthChecker) RegisterCheck(name string, importance CheckImportance, checkFunc CheckFunc) {
-	hc.mu.Lock()
-	defer hc.mu.Unlock()
+// CheckResult represents the result of a health check
+type CheckResult struct {
+	Name          string       `json:"name"`
+	Status        HealthStatus `json:"status"`
+	ObservationTS time.Time    `json:"observation_ts"`
+}
 
-	wrappedCheckFunc := func() CheckResult {
-		startTime := time.Now()
-		status, err := checkFunc()
-		duration := time.Since(startTime)
+func (c *Check) WithCache(ttl int) {
+	ttlDuration := time.Duration(ttl) * time.Second
+	c.caching = &caching{
+		cacheTTL: ttl,
+		ticker:   time.NewTicker(ttlDuration),
+		cache:    cache.New(ttlDuration, ttlDuration),
+	}
 
-		var output string
-		if err != nil {
-			output = err.Error()
+	// Start the periodic update
+	go func() {
+		for {
+			select {
+			case <-c.caching.ticker.C:
+				c.UpdateCache()
+			}
 		}
+	}()
+}
+
+func (c *Check) isCached() bool {
+	return c.caching != nil
+}
+
+func (c *Check) getStatus() CheckResult {
+	if c.isCached() {
+		if cachedValue, found := c.caching.cache.Get(c.Name); found {
+			return cachedValue.(CheckResult)
+		}
+
+		// If the cache was supposed to have the value but didn't, update the cache.
+		c.UpdateCache()
+		if cachedValue, found := c.caching.cache.Get(c.Name); found {
+			return cachedValue.(CheckResult)
+		}
+	}
+
+	return c.Perform()
+}
+
+func (c *Check) UpdateCache() {
+	if !c.isCached() {
+		return
+	}
+
+	res := c.Perform()
+	c.caching.cache.Set(c.Name, res, cache.DefaultExpiration)
+}
+
+// set the observation time
+func timedCheck(name string, checkFunc CheckFunc) func() CheckResult {
+	return func() CheckResult {
+		observationTS := time.Now()
+
+		status, _ := checkFunc()
 
 		return CheckResult{
 			Name:          name,
 			Status:        status,
-			ObservationTS: time.Now().Add(-duration),
-			Output:        output,
+			ObservationTS: observationTS,
 		}
-	}
-
-	check := &Check{
-		Name:       name,
-		Importance: importance,
-		Perform:    wrappedCheckFunc,
-	}
-
-	hc.checks = append(hc.checks, check)
-}
-
-func (hc *HealthChecker) PerformChecks() HealthCheckResponse {
-	hc.mu.RLock()
-	defer hc.mu.RUnlock()
-
-	var results []CheckResult
-	var overallStatus HealthStatus = StatusPass
-	var statusCode int = 200
-
-	for _, check := range hc.checks {
-		result := check.Perform()
-		results = append(results, result)
-
-		if result.Status == StatusFail && check.Importance == Required {
-			overallStatus = StatusFail
-			statusCode = 500
-		} else if result.Status == StatusWarn && overallStatus != StatusFail {
-			overallStatus = StatusWarn
-			statusCode = 429
-		}
-	}
-
-	return HealthCheckResponse{
-		OverallStatus: string(overallStatus),
-		StatusCode:    statusCode,
-		Components:    results,
-	}
-}
-
-func (hc *HealthChecker) HTTPHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		checkResults := hc.PerformChecks()
-		serializedResults, err := json.Marshal(checkResults)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Error serializing check results: %v", err), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(checkResults.StatusCode)
-		w.Write(serializedResults)
 	}
 }

@@ -1,7 +1,7 @@
 package TykHealthcheck
 
 import (
-	"sync"
+	"github.com/patrickmn/go-cache"
 	"time"
 )
 
@@ -24,35 +24,17 @@ const (
 type CheckImportance string
 
 const (
+	// Required should be used when a check should be always ok
 	Required CheckImportance = "required"
+	// Optional can be used when a check is not required to be everytime ok, but if it fails then it not make the application fail
 	Optional CheckImportance = "optional"
-	Info     CheckImportance = "info"
+	// Info should be used when the check doesn't directly impact the operational status
+	Info CheckImportance = "info"
 )
 
-// HealthChecker manages a set of checks
-type HealthChecker struct {
-	checks []*Check
-	mu     sync.RWMutex
-}
+type caching struct {
+	cacheTTL int
+	ticker   *time.Ticker
 
-// Check represents an individual health check
-type Check struct {
-	Name       string
-	Importance CheckImportance
-	Perform    func() CheckResult
-}
-
-type HealthCheckResponse struct {
-	OverallStatus string        `json:"overallStatus"`
-	StatusCode    int           `json:"statusCode"`
-	Components    []CheckResult `json:"components"`
-}
-
-// CheckResult represents the result of a health check
-type CheckResult struct {
-	Name          string       `json:"name"`
-	Type          string       `json:"type"`
-	Status        HealthStatus `json:"status"`
-	ObservationTS time.Time    `json:"observationTS"`
-	Output        string       `json:"output"`
+	cache *cache.Cache
 }
