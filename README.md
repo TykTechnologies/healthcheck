@@ -9,8 +9,8 @@ TykHealthcheck is a flexible health checking framework designed for Tyk ecosyste
 - **Custom Health Checks**: Easily define your own liveness and readiness checks specific to your application's requirements.
 - **Health Check Types**: Distinguish between essential (required) and optional checks.
 - **HTTP Handler Support**: TykHealthcheck provides HTTP handlers to expose your health checks over HTTP, making it easy to integrate with your application's routing and middleware.
-- **Caching**: Ypu might need to implement the caching mechanism inside each check registered.
-
+- **Caching**: The library features built-in caching that performs periodic updates of the cache at a configurable interval. Once set, the library will automatically execute the checker every specified number of seconds, ensuring that an up-to-date value is always readily available for retrieval.
+- 
 ## Getting Started
 
 ### Prerequisites
@@ -47,6 +47,15 @@ readinessHealthChecker.RegisterCheck("Database", hc.Required, func() (hc.HealthS
     // Implement your check logic here
     return hc.StatusPass, nil
 })
+```
+
+Optionally you can enable the caching mechanism by calling the method `WithCache(seconds)`, Eg: 
+
+```go
+readinessHealthChecker.RegisterCheck("Database", hc.Required, func() (hc.HealthStatus, error) {
+    // Implement your check logic here
+    return hc.StatusPass, nil
+}).WithCache(100)
 ```
 
 #### 3- Expose Health Checks:

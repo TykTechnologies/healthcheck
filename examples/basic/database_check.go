@@ -46,10 +46,8 @@ func (db *DatabaseCheck) updateCache() {
 	// Logic here will be replaced with actual check logic
 	if db.cachedResult.Status == hc.StatusPass {
 		db.cachedResult.Status = hc.StatusFail
-		db.cachedResult.Output = "Database check failed"
 	} else {
 		db.cachedResult.Status = hc.StatusPass
-		db.cachedResult.Output = "Database check passed"
 	}
 
 	db.cachedResult.ObservationTS = time.Now()
