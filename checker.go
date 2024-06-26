@@ -25,6 +25,7 @@ func (c *Check) WithCache(ttl int) {
 	c.caching = &caching{
 		cacheTTL: ttl,
 		ticker:   time.NewTicker(ttlDuration),
+		stopChan: make(chan struct{}),
 		cache:    cache.New(ttlDuration, ttlDuration),
 	}
 
@@ -34,9 +35,18 @@ func (c *Check) WithCache(ttl int) {
 			select {
 			case <-c.caching.ticker.C:
 				c.UpdateCache()
+			case <-c.caching.stopChan:
+				c.caching.ticker.Stop()
+				return
 			}
 		}
 	}()
+}
+
+func (c *Check) StopCacheTicker() {
+	if c.caching != nil && c.caching.stopChan != nil {
+		close(c.caching.stopChan) // Close the channel to signal the goroutine to stop
+	}
 }
 
 func (c *Check) isCached() bool {

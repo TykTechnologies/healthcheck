@@ -35,6 +35,7 @@ const (
 type caching struct {
 	cacheTTL int
 	ticker   *time.Ticker
+	stopChan chan struct{}
 
 	cache *cache.Cache
 }
