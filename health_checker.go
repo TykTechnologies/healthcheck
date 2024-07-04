@@ -16,7 +16,7 @@ type HealthChecker struct {
 type HealthCheckResponse struct {
 	Status     HealthStatus  `json:"status"`
 	StatusCode int           `json:"status_code"`
-	Components []CheckResult `json:"components"`
+	Components []CheckResult `json:"components,omitempty"`
 }
 
 func NewHealthChecker() *HealthChecker {
