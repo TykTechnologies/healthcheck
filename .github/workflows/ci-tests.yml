@@ -1,7 +1,10 @@
-name: Go Test Workflow
-
+name: "Go Test Workflow"
 on:
   push:
+    branches:
+      - main
+      - release-**
+  pull_requests:
     branches:
       - main
       - release-**
