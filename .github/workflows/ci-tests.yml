@@ -1,4 +1,5 @@
 name: "Go Test Workflow"
+
 on:
   push:
     branches:
@@ -29,15 +30,14 @@ jobs:
         with:
           version: latest
           args: --out-format=checkstyle:golanglint.xml --timeout=600s --max-issues-per-linter=0 --max-same-issues=0 --new-from-rev=origin/${{ github.base_ref }}
-      - name: upload artifact
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2
         with:
-          name: golangci-lint
+          name: golangcilint
           retention-days: 1
           path: |
             golanglint.xml
   ci-test:
-    name: tests
+    name: "tests"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
