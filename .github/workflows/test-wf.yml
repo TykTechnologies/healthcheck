@@ -1,0 +1,6 @@
+jobs:
+  test-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Step
+        run: echo "This workflow was triggered"
