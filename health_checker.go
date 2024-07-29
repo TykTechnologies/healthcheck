@@ -55,10 +55,10 @@ func (hc *HealthChecker) PerformChecks() HealthCheckResponse {
 
 		if result.Status == StatusFail && check.Importance == Required {
 			overallStatus = StatusFail
-			statusCode = 500
+			statusCode = http.StatusServiceUnavailable
 		} else if result.Status == StatusWarn && overallStatus != StatusFail {
 			overallStatus = StatusWarn
-			statusCode = 429
+			statusCode = http.StatusMultiStatus
 		}
 	}
 

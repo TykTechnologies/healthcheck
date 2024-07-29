@@ -78,7 +78,7 @@ func TestPerformChecks(t *testing.T) {
 				}}
 				return hc
 			},
-			expected: HealthCheckResponse{Status: StatusFail, StatusCode: 500},
+			expected: HealthCheckResponse{Status: StatusFail, StatusCode: http.StatusServiceUnavailable},
 		},
 		{
 			name: "Optional Check Warns",
@@ -89,7 +89,7 @@ func TestPerformChecks(t *testing.T) {
 				}}
 				return hc
 			},
-			expected: HealthCheckResponse{Status: StatusWarn, StatusCode: 429},
+			expected: HealthCheckResponse{Status: StatusWarn, StatusCode: http.StatusMultiStatus},
 		},
 	}
 
