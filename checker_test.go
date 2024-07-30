@@ -1,10 +1,11 @@
 package healthcheck
 
 import (
-	"github.com/patrickmn/go-cache"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/patrickmn/go-cache"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsCached(t *testing.T) {

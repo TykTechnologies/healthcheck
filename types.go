@@ -1,8 +1,9 @@
 package healthcheck
 
 import (
-	"github.com/patrickmn/go-cache"
 	"time"
+
+	"github.com/patrickmn/go-cache"
 )
 
 // CheckFunc defines the signature for health check functions.

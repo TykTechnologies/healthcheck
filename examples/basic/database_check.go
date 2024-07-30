@@ -1,9 +1,10 @@
 package main
 
 import (
-	hc "github.com/TykTechnologies/healthcheck"
 	"sync"
 	"time"
+
+	hc "github.com/TykTechnologies/healthcheck"
 )
 
 // DatabaseCheck simulates a database check with caching and a ticker to perform underground update of the status

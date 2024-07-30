@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	hc "github.com/TykTechnologies/healthcheck"
 	"math/rand"
 	"net/http"
 	"time"
+
+	hc "github.com/TykTechnologies/healthcheck"
 )
 
 func main() {
