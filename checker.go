@@ -1,8 +1,9 @@
 package healthcheck
 
 import (
-	"github.com/patrickmn/go-cache"
 	"time"
+
+	"github.com/patrickmn/go-cache"
 )
 
 // Check represents an individual health check
